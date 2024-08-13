@@ -4,5 +4,4 @@ requests
 plotly
 plotly.express
 matplotlib
-matplotlib.ticker
 pandas
