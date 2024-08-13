@@ -107,15 +107,17 @@ def plot_historical_snowfall(historical_df):
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.bar(snowfall_counts.index, snowfall_counts.values, color='skyblue', edgecolor='black')
 
-    # Set x-axis limits to show whole months
+    # Set x-axis limits to show the 2-day buffer
     ax.set_xlim(start_date, end_date)
 
-    # Set x-axis format to show months
-    ax.xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%b'))
-    ax.set_xticks(pd.date_range(start=start_date, end=end_date, freq='MS'))
+    # Set x-axis to show labels every 5 days
+    ax.set_xticks(pd.date_range(start=start_date, end=end_date, freq='5D'))
+
+    # Set x-axis format to show month and day
+    ax.xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%b %d'))
 
     # Set labels and title
-    ax.set_xlabel('Month')
+    ax.set_xlabel('Day of Year')
     ax.set_ylabel('Number of Occurrences')
     ax.set_title('First Snowfall Frequency by Calendar Day')
 
