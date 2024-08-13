@@ -2,12 +2,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import streamlit as st
+from datetime import datetime
 
 def plot_player_guesses_timeline(guesses):
     try:
         # Convert guesses to DataFrame and parse dates
         guess_df = pd.DataFrame(list(guesses.items()), columns=['Player', 'Guess'])
         guess_df['Guess'] = pd.to_datetime(guess_df['Guess'])
+
+        # Get today's date
+        today = pd.to_datetime(datetime.today().date())
 
         # Create the figure and axis
         fig, ax = plt.subplots(figsize=(10, 2))
@@ -23,10 +27,19 @@ def plot_player_guesses_timeline(guesses):
             ax.text(row['Guess'], 1.05, f"{row['Player']}\n{row['Guess'].strftime('%b %d')}", 
                     ha='center', fontsize=8, rotation=45)
 
+        # Plot today's date
+        ax.plot(today, 1, "o", color="red")
+        ax.vlines(today, 0, 1, colors="red", linestyle='solid')
+        ax.text(today, 1.05, f"Today\n{today.strftime('%b %d')}", ha='center', fontsize=8, rotation=45, color="red")
+
         # Format x-axis to show only months
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%b"))
         plt.setp(ax.get_xticklabels(), rotation=0, ha="center")
+
+        # Adjust x-axis limits to include today
+        ax.set_xlim(min(guess_df['Guess'].min(), today) - pd.Timedelta(days=2), 
+                    max(guess_df['Guess'].max(), today) + pd.Timedelta(days=2))
 
         # Remove y-axis and spines for a cleaner look
         ax.get_yaxis().set_visible(False)
