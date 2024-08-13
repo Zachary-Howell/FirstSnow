@@ -51,36 +51,30 @@ def get_historical_snowfall(latitude, longitude, start_year, end_year):
 def calculate_snowfall_statistics(historical_df):
     """
     Calculate the earliest, latest, and average first snowfall day after summer for the given historical data.
+    Return detailed information for debugging.
     """
     # Ensure all dates are after July 1st
     historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
-    historical_df = historical_df[historical_df['first_snowfall_date'].dt.month >= 7]
+    filtered_df = historical_df[historical_df['first_snowfall_date'].dt.month >= 7]
 
-    # Debugging: Check the filtered DataFrame
-    print("Filtered DataFrame:", historical_df)
-
-    if historical_df.empty:
-        return "N/A", "N/A", "N/A"
+    if filtered_df.empty:
+        return "N/A", "N/A", "N/A", filtered_df
 
     # Calculate earliest day
-    earliest_day_date = historical_df['first_snowfall_date'].min()
-    print("Earliest Date:", earliest_day_date)
+    earliest_day_date = filtered_df['first_snowfall_date'].min()
     earliest_day = earliest_day_date.strftime('%B %d')
 
     # Calculate latest day
-    latest_day_date = historical_df['first_snowfall_date'].max()
-    print("Latest Date:", latest_day_date)
+    latest_day_date = filtered_df['first_snowfall_date'].max()
     latest_day = latest_day_date.strftime('%B %d')
 
     # Calculate average day
-    average_day_of_year = historical_df['first_snowfall_date'].dt.dayofyear.mean()
-    print("Average Day of Year:", average_day_of_year)
+    average_day_of_year = filtered_df['first_snowfall_date'].dt.dayofyear.mean()
     average_day = pd.to_datetime(average_day_of_year, format='%j').strftime('%B %d')
 
-    # Output the final results for verification
-    print(f"Earliest Day: {earliest_day}, Latest Day: {latest_day}, Average Day: {average_day}")
+    # Return detailed results for debugging
+    return earliest_day, latest_day, average_day, filtered_df
 
-    return earliest_day, latest_day, average_day
 
 def predict_first_snowfall_openweather(forecast_data):
     """
