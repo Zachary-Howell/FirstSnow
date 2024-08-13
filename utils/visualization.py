@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.ticker as ticker
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
@@ -119,6 +120,9 @@ def plot_historical_snowfall(historical_df):
         height = bar.get_height()
         day = date.strftime('%d')
         ax.text(bar.get_x() + bar.get_width() / 2, height, day, ha='center', va='bottom')
+
+    # Set y-axis to only show whole numbers
+    ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
     # Set labels and title
     ax.set_xlabel('Month')
