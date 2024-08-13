@@ -38,16 +38,6 @@ def main():
     historical_snowfall = get_historical_snowfall(latitude, longitude, datetime.now().year - 20, datetime.now().year - 1)
     historical_df = pd.DataFrame(historical_snowfall)
 
-    # Calculate and display statistics
-    earliest_day, latest_day, average_day, filtered_df = calculate_snowfall_statistics(historical_df)
-
-    # Debugging output using Streamlit
-    st.write("Original Historical DataFrame:", historical_df)
-    st.write("Filtered DataFrame (after July 1st):", filtered_df)
-    st.write(f"Earliest Day: {earliest_day}")
-    st.write(f"Latest Day: {latest_day}")
-    st.write(f"Average Day: {average_day}")
-
     # Streamlit UI
     st.title("First Snowfall Game")
 
@@ -101,9 +91,9 @@ def main():
 
         # Calculate and display statistics
         earliest_day, latest_day, average_day = calculate_snowfall_statistics(historical_df)
-        st.markdown(f"**Earliest First Snowfall:** {earliest_day}")
-        st.markdown(f"**Latest First Snowfall:** {latest_day}")
-        st.markdown(f"**Average First Snowfall:** {average_day}")
+        st.markdown(f"Earliest Day: {earliest_day}")
+        st.markdown(f"Latest Day: {latest_day}")
+        st.markdown(f"Average Day: {average_day}")
     else:
         st.write("No historical snowfall data available.")
 
