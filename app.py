@@ -18,6 +18,8 @@ guesses = load_json('config/guesses.json')
 latitude = location["latitude"]
 longitude = location["longitude"]
 
+openweathermap_api_key = "c6e2aa1a65071e890402c494f4aad18e"
+
 def main():
     # Fetch weather forecasts
     forecast_data_openweather = get_openweather_forecast(latitude, longitude, OPENWEATHER_API_KEY)
@@ -37,11 +39,20 @@ def main():
     st.header("Player Guesses Timeline")
     st.plotly_chart(plot_player_guesses_timeline(guesses))
 
-    st.header("Predicted First Snowfall Date (OpenWeatherMap)")
-    st.write(predicted_snowfall_date_openweather or "No snowfall predicted in the current 5-day forecast period.")
+    # Combine the forecasts under a single header
+    st.header("Predicted First Snowfall Date (Combined Forecasts)")
 
-    st.header("Predicted First Snowfall Date (Open-Meteo)")
-    st.write(predicted_snowfall_date_openmeteo or "No snowfall predicted in the current 14-day forecast period.")
+    st.subheader("OpenWeatherMap Forecast")
+    if predicted_snowfall_date_openweather:
+        st.write(f"OpenWeatherMap predicts the first snowfall on: {predicted_snowfall_date_openweather}")
+    else:
+        st.write("No snowfall predicted in the current 5-day forecast period.")
+
+    st.subheader("Open-Meteo Forecast")
+    if predicted_snowfall_date_openmeteo:
+        st.write(f"Open-Meteo predicts the first snowfall on: {predicted_snowfall_date_openmeteo}")
+    else:
+        st.write("No snowfall predicted in the current 14-day forecast period.")
 
     st.header("Who Would Win If It Snowed Today?")
     closest_guess_today = min(guesses.items(), key=lambda x: abs(datetime.strptime(x[1], '%Y-%m-%d').date() - datetime.now().date()))
