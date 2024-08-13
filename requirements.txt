@@ -1,3 +1,6 @@
 streamlit
 datetime
 requests
+plotly
+plotly.express
+pandas
