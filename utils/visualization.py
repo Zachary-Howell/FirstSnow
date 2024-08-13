@@ -18,21 +18,21 @@ def plot_player_guesses_timeline(guesses):
         # Add vertical stems connecting points to the timeline
         ax.vlines(guess_df['Guess'], 0, 1, colors="C0", linestyle='dotted')
 
-        # Add player names as labels
+        # Add player names and guess dates as labels
         for idx, row in guess_df.iterrows():
-            ax.text(row['Guess'], 1.05, row['Player'], ha='center', fontsize=8, rotation=45)
+            ax.text(row['Guess'], 1.05, f"{row['Player']}\n{row['Guess'].strftime('%b %d')}", 
+                    ha='center', fontsize=8, rotation=45)
 
-        # Format x-axis
-        ax.xaxis.set_major_locator(mdates.WeekdayLocator(interval=1))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %d"))
-        plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
+        # Format x-axis to show only months
+        ax.xaxis.set_major_locator(mdates.MonthLocator())
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b"))
+        plt.setp(ax.get_xticklabels(), rotation=0, ha="center")
 
         # Remove y-axis and spines for a cleaner look
         ax.get_yaxis().set_visible(False)
         ax.spines[["left", "top", "right"]].set_visible(False)
 
-        # Title and layout adjustments
-        plt.title("Player Guesses Timeline")
+        # Adjust layout
         plt.tight_layout()
 
         return fig
