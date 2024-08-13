@@ -82,6 +82,9 @@ def calculate_snowfall_statistics(historical_df):
     historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
     historical_df = historical_df[historical_df['first_snowfall_date'].dt.month >= 7]
 
+    if historical_df.empty:
+        return "N/A", "N/A", "N/A"
+
     # Calculate earliest, latest, and average first snowfall day
     earliest_day = historical_df['first_snowfall_date'].min().strftime('%B %d')
     latest_day = historical_df['first_snowfall_date'].max().strftime('%B %d')
