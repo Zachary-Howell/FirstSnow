@@ -105,7 +105,7 @@ def plot_historical_snowfall(historical_df):
 
     # Create the plot
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.bar(snowfall_counts.index, snowfall_counts.values, color='skyblue', edgecolor='black')
+    bars = ax.bar(snowfall_counts.index, snowfall_counts.values, color='skyblue', edgecolor='black')
 
     # Set x-axis limits to show the 2-day buffer
     ax.set_xlim(start_date, end_date)
