@@ -39,9 +39,9 @@ def main():
     historical_df = pd.DataFrame(historical_snowfall)
 
     # Streamlit UI
-    st.title("❄ Snowfall - The Game ❄")
+    st.title("❄ SNOWFALL - THE GAME ❄")
 
-    st.header("Player Guesses Timeline")
+    st.header("PLAYER GUESSES")
     fig_timeline = plot_player_guesses_timeline(guesses)
     if fig_timeline:
         st.pyplot(fig_timeline)
@@ -49,7 +49,7 @@ def main():
     # Insert a horizontal line
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    st.header("Projected Winners:")
+    st.header("PROJECTED WINNERS")
     
     st.subheader('If it snowed today?')
     closest_guess_today = min(guesses.items(), key=lambda x: abs(datetime.strptime(x[1], '%Y-%m-%d').date() - datetime.now().date()))
@@ -72,7 +72,7 @@ def main():
     st.markdown("<hr>", unsafe_allow_html=True)
 
     # Combine the forecasts under a single header
-    st.header("Forecasted First Snowfall Date")
+    st.header("FORECASTED FIRST SNOWFALL DATE")
 
     st.subheader("OpenWeatherMap Forecast")
     if predicted_snowfall_date_openweather:
@@ -89,15 +89,17 @@ def main():
     # Insert a horizontal line
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    st.header("Historical First Snowfall Dates (Past 20 Years)")
+    st.header("HISTORICAL DATA")
     if not historical_df.empty:
         st.pyplot(plot_historical_snowfall(historical_df))
 
         # Calculate and display statistics
         earliest_day, latest_day, average_day = calculate_snowfall_statistics(historical_df)
-        st.markdown(f"Earliest Day: {earliest_day}")
-        st.markdown(f"Latest Day: {latest_day}")
-        st.markdown(f"Average Day: {average_day}")
+        st.markdown(f"""
+        - **Earliest Day:** {earliest_day}
+        - **Latest Day:** {latest_day}
+        - **Average Day:** {average_day}
+        """)
     else:
         st.write("No historical snowfall data available.")
 
