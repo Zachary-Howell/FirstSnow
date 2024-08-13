@@ -39,6 +39,9 @@ def main():
     if fig_timeline:
         st.plotly_chart(fig_timeline)
 
+    # Insert a horizontal line
+    st.markdown("<hr>", unsafe_allow_html=True)
+
     # Combine the forecasts under a single header
     st.header("Predicted First Snowfall Date (Combined Forecasts)")
 
@@ -54,6 +57,9 @@ def main():
     else:
         st.write("No snowfall predicted in the current 14-day forecast period.")
 
+    # Insert a horizontal line
+    st.markdown("<hr>", unsafe_allow_html=True)
+
     st.header("Who Would Win If It Snowed Today?")
     closest_guess_today = min(guesses.items(), key=lambda x: abs(datetime.strptime(x[1], '%Y-%m-%d').date() - datetime.now().date()))
     st.write(f"{closest_guess_today[0]} would win with a guess of {closest_guess_today[1]}.")
@@ -68,6 +74,9 @@ def main():
             predicted_date = datetime.strptime(predicted_snowfall_date_openmeteo, '%Y-%m-%d').date()
             closest_guess_predicted = min(guesses.items(), key=lambda x: abs(datetime.strptime(x[1], '%Y-%m-%d').date() - predicted_date))
             st.write(f"If Open-Meteo is correct, {closest_guess_predicted[0]} would win with a guess of {closest_guess_predicted[1]}.")
+
+    # Insert a horizontal line
+    st.markdown("<hr>", unsafe_allow_html=True)
 
     st.header("Historical First Snowfall Dates (Past 20 Years)")
     if not historical_df.empty:
