@@ -3,7 +3,7 @@ import requests
 from datetime import datetime, timedelta
 
 # API keys (replace with your own keys)
-openweather_api_key = 'your_openweathermap_api_key'
+openweather_api_key = st.secrets["api_key"]
 
 # Define the location
 latitude = 41.161083  # Example latitude (Salt Lake City, UT)
