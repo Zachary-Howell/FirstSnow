@@ -6,6 +6,12 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
+import json
+
+# Load JSON data
+def load_json(file_path):
+    with open(file_path, 'r') as file:
+        return json.load(file)
 
 def plot_player_guesses_timeline(earliest_day, latest_day, average_day):
     """
