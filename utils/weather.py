@@ -51,29 +51,31 @@ def get_historical_snowfall(latitude, longitude, start_year, end_year):
 def calculate_snowfall_statistics(historical_df):
     """
     Calculate the earliest, latest, and average first snowfall day after summer for the given historical data.
-    Return detailed information for debugging.
+    Ensure correct handling of dates for min and max calculations.
     """
-    # Ensure all dates are after July 1st
+    # Convert to datetime if not already
     historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
+
+    # Filter out dates before July 1st
     filtered_df = historical_df[historical_df['first_snowfall_date'].dt.month >= 7]
 
     if filtered_df.empty:
         return "N/A", "N/A", "N/A", filtered_df
 
-    # Calculate earliest day
+    # Calculate earliest and latest snowfall dates from the entire filtered data
     earliest_day_date = filtered_df['first_snowfall_date'].min()
-    earliest_day = earliest_day_date.strftime('%B %d')
-
-    # Calculate latest day
     latest_day_date = filtered_df['first_snowfall_date'].max()
+
+    # Convert to readable format
+    earliest_day = earliest_day_date.strftime('%B %d')
     latest_day = latest_day_date.strftime('%B %d')
 
-    # Calculate average day
+    # Calculate average day of the year and convert back to a date
     average_day_of_year = filtered_df['first_snowfall_date'].dt.dayofyear.mean()
     average_day = pd.to_datetime(average_day_of_year, format='%j').strftime('%B %d')
 
-    # Return detailed results for debugging
     return earliest_day, latest_day, average_day, filtered_df
+
 
 
 def predict_first_snowfall_openweather(forecast_data):
