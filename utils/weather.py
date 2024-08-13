@@ -31,11 +31,14 @@ def get_historical_snowfall(latitude, longitude, start_year, end_year):
     snowfall_df = pd.DataFrame(all_snowfall_data)
     snowfall_df['date'] = pd.to_datetime(snowfall_df['date'])
 
+    # Extract the year from the date to avoid inserting a duplicate column
+    snowfall_df['year'] = snowfall_df['date'].dt.year
+
     # Group by year and find the first snowfall after July 1st for each year
-    first_snowfall = snowfall_df.groupby(snowfall_df['date'].dt.year)['date'].min().reset_index()
-    first_snowfall.columns = ['year', 'first_snowfall_date']
+    first_snowfall = snowfall_df.groupby('year')['date'].min().reset_index()
 
     return first_snowfall.to_dict(orient='records')
+
 
 def calculate_snowfall_statistics(historical_df):
     """
