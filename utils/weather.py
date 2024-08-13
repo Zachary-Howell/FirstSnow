@@ -51,31 +51,27 @@ def get_historical_snowfall(latitude, longitude, start_year, end_year):
 def calculate_snowfall_statistics(historical_df):
     """
     Calculate the earliest, latest, and average first snowfall day after summer for the given historical data.
-    Ensure correct handling of dates for min and max calculations.
+    Ensure correct handling of dates by focusing only on month and day.
     """
     # Convert to datetime if not already
     historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
 
-    # Filter out dates before July 1st
-    filtered_df = historical_df[historical_df['first_snowfall_date'].dt.month >= 7]
+    # Extract month and day (ignore the year)
+    historical_df['month_day'] = historical_df['first_snowfall_date'].apply(lambda x: x.strftime('%m-%d'))
 
-    if filtered_df.empty:
-        return "N/A", "N/A", "N/A", filtered_df
+    # Calculate earliest and latest snowfall dates based on month and day, ignoring year
+    earliest_day_date = historical_df['month_day'].min()
+    latest_day_date = historical_df['month_day'].max()
 
-    # Calculate earliest and latest snowfall dates from the entire filtered data
-    earliest_day_date = filtered_df['first_snowfall_date'].min()
-    latest_day_date = filtered_df['first_snowfall_date'].max()
-
-    # Convert to readable format
-    earliest_day = earliest_day_date.strftime('%B %d')
-    latest_day = latest_day_date.strftime('%B %d')
+    # Convert back to a readable format (just add a placeholder year for formatting)
+    earliest_day = pd.to_datetime(earliest_day_date, format='%m-%d').strftime('%B %d')
+    latest_day = pd.to_datetime(latest_day_date, format='%m-%d').strftime('%B %d')
 
     # Calculate average day of the year and convert back to a date
-    average_day_of_year = filtered_df['first_snowfall_date'].dt.dayofyear.mean()
+    average_day_of_year = historical_df['first_snowfall_date'].dt.dayofyear.mean()
     average_day = pd.to_datetime(average_day_of_year, format='%j').strftime('%B %d')
 
-    return earliest_day, latest_day, average_day, filtered_df
-
+    return earliest_day, latest_day, average_day, historical_df
 
 
 def predict_first_snowfall_openweather(forecast_data):
