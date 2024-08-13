@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 from datetime import datetime, timedelta
 import plotly.express as px
-import plotly.figure_factory as ff
+from plotly.tools import FigureFactory as FF
 import pandas as pd
 
 # API keys (replace with your own keys)
