@@ -1,28 +1,38 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import streamlit as st
 
 def plot_player_guesses_timeline(guesses):
     try:
+        # Convert guesses to DataFrame and parse dates
         guess_df = pd.DataFrame(list(guesses.items()), columns=['Player', 'Guess'])
         guess_df['Guess'] = pd.to_datetime(guess_df['Guess'])
 
-        fig, ax = plt.subplots(figsize=(10, 3))
+        # Create the figure and axis
+        fig, ax = plt.subplots(figsize=(10, 2))
 
-        # Create the timeline
-        for index, row in guess_df.iterrows():
-            ax.plot(row['Guess'], 1, 'o', label=row['Player'])
+        # Plot the timeline (a single horizontal line)
+        ax.plot(guess_df['Guess'], [1] * len(guess_df), "o", color="C0")
 
-        # Customize the plot
-        ax.get_yaxis().set_visible(False)  # Hide the y-axis
-        ax.set_xlabel('Date')
-        ax.set_xlim(guess_df['Guess'].min() - pd.Timedelta(days=2), guess_df['Guess'].max() + pd.Timedelta(days=2))
-        
-        # Create labels and title
-        for index, row in guess_df.iterrows():
-            ax.text(row['Guess'], 1.02, row['Player'], rotation=45, ha='right', fontsize=8)
+        # Add vertical stems connecting points to the timeline
+        ax.vlines(guess_df['Guess'], 0, 1, colors="C0", linestyle='dotted')
 
-        plt.title('Player Guesses Timeline')
+        # Add player names as labels
+        for idx, row in guess_df.iterrows():
+            ax.text(row['Guess'], 1.05, row['Player'], ha='center', fontsize=8, rotation=45)
+
+        # Format x-axis
+        ax.xaxis.set_major_locator(mdates.WeekdayLocator(interval=1))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %d"))
+        plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
+
+        # Remove y-axis and spines for a cleaner look
+        ax.get_yaxis().set_visible(False)
+        ax.spines[["left", "top", "right"]].set_visible(False)
+
+        # Title and layout adjustments
+        plt.title("Player Guesses Timeline")
         plt.tight_layout()
 
         return fig
