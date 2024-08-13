@@ -39,7 +39,7 @@ def main():
     historical_df = pd.DataFrame(historical_snowfall)
 
     # Streamlit UI
-    st.title("Snowfall - The Game")
+    st.title("❄ Snowfall - The Game ❄")
 
     st.header("Player Guesses Timeline")
     fig_timeline = plot_player_guesses_timeline(guesses)
