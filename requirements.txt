@@ -3,5 +3,4 @@ datetime
 requests
 plotly
 plotly.express
-plotly.tools
 pandas

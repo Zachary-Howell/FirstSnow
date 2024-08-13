@@ -2,7 +2,6 @@ import streamlit as st
 import requests
 from datetime import datetime, timedelta
 import plotly.express as px
-from plotly.tools import FigureFactory as FF
 import pandas as pd
 
 # API keys (replace with your own keys)
@@ -81,15 +80,16 @@ if guesses:
     guess_df = pd.DataFrame(list(guesses.items()), columns=['Player', 'Guess'])
     guess_df['Guess'] = pd.to_datetime(guess_df['Guess'])
 
-    fig_timeline = ff.create_gantt(
-        guess_df.rename(columns={'Guess': 'Start'}), 
-        index_col='Player', 
-        show_colorbar=True, 
-        group_tasks=True, 
+    # Create a timeline chart
+    fig_timeline = px.timeline(
+        guess_df, 
+        x_start="Guess", 
+        x_end="Guess", 
+        y="Player", 
+        color="Player",
         title="Player Guesses Timeline",
-        showgrid_x=True, 
-        showgrid_y=True
     )
+    fig_timeline.update_yaxes(categoryorder="total ascending")
     st.plotly_chart(fig_timeline)
 
 st.header("Predicted First Snowfall Date (OpenWeatherMap)")
