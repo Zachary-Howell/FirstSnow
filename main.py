@@ -75,9 +75,21 @@ historical_df = pd.DataFrame(historical_snowfall)
 # Display the dashboard
 st.title("First Snowfall Game")
 
-st.header("Player Guesses")
-for player, guess in guesses.items():
-    st.write(f"{player}: {guess}")
+st.header("Player Guesses Timeline")
+if guesses:
+    guess_df = pd.DataFrame(list(guesses.items()), columns=['Player', 'Guess'])
+    guess_df['Guess'] = pd.to_datetime(guess_df['Guess'])
+
+    fig_timeline = ff.create_gantt(
+        guess_df.rename(columns={'Guess': 'Start'}), 
+        index_col='Player', 
+        show_colorbar=True, 
+        group_tasks=True, 
+        title="Player Guesses Timeline",
+        showgrid_x=True, 
+        showgrid_y=True
+    )
+    st.plotly_chart(fig_timeline)
 
 st.header("Predicted First Snowfall Date (OpenWeatherMap)")
 if predicted_snowfall_date_openweather:
