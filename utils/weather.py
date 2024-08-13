@@ -56,13 +56,29 @@ def calculate_snowfall_statistics(historical_df):
     historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
     historical_df = historical_df[historical_df['first_snowfall_date'].dt.month >= 7]
 
+    # Debugging: Check the filtered DataFrame
+    print("Filtered DataFrame:", historical_df)
+
     if historical_df.empty:
         return "N/A", "N/A", "N/A"
 
-    # Calculate earliest, latest, and average first snowfall day
-    earliest_day = historical_df['first_snowfall_date'].min().strftime('%B %d')
-    latest_day = historical_df['first_snowfall_date'].max().strftime('%B %d')
-    average_day = pd.to_datetime(historical_df['first_snowfall_date'].dt.dayofyear.mean(), format='%j').strftime('%B %d')
+    # Calculate earliest day
+    earliest_day_date = historical_df['first_snowfall_date'].min()
+    print("Earliest Date:", earliest_day_date)
+    earliest_day = earliest_day_date.strftime('%B %d')
+
+    # Calculate latest day
+    latest_day_date = historical_df['first_snowfall_date'].max()
+    print("Latest Date:", latest_day_date)
+    latest_day = latest_day_date.strftime('%B %d')
+
+    # Calculate average day
+    average_day_of_year = historical_df['first_snowfall_date'].dt.dayofyear.mean()
+    print("Average Day of Year:", average_day_of_year)
+    average_day = pd.to_datetime(average_day_of_year, format='%j').strftime('%B %d')
+
+    # Output the final results for verification
+    print(f"Earliest Day: {earliest_day}, Latest Day: {latest_day}, Average Day: {average_day}")
 
     return earliest_day, latest_day, average_day
 
