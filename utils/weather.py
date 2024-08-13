@@ -30,10 +30,10 @@ def get_historical_snowfall(latitude, longitude, start_year, end_year):
     # Convert to DataFrame
     snowfall_df = pd.DataFrame(all_snowfall_data)
     if snowfall_df.empty:
-        st.error("No snowfall data was retrieved from the API.")
+        print("No snowfall data was retrieved from the API.")  # Replace st.error with print for backend debugging
         return pd.DataFrame()  # Return an empty DataFrame
 
-    st.write("Snowfall DataFrame:", snowfall_df)  # Debugging output to inspect the DataFrame
+    print("Snowfall DataFrame:", snowfall_df)  # Debugging output to inspect the DataFrame
 
     snowfall_df['date'] = pd.to_datetime(snowfall_df['date'])
 
@@ -44,10 +44,9 @@ def get_historical_snowfall(latitude, longitude, start_year, end_year):
     first_snowfall = snowfall_df.groupby('year')['date'].min().reset_index()
     first_snowfall.columns = ['year', 'first_snowfall_date']
 
-    st.write("First Snowfall DataFrame:", first_snowfall)  # Debugging output to inspect the DataFrame
+    print("First Snowfall DataFrame:", first_snowfall)  # Debugging output to inspect the DataFrame
 
     return first_snowfall
-
 
 def calculate_snowfall_statistics(historical_df):
     """
