@@ -3,4 +3,6 @@ datetime
 requests
 plotly
 plotly.express
+matplotlib
+matplotlib.pyplot
 pandas

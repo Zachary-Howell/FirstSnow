@@ -2,7 +2,13 @@ import streamlit as st
 import json
 from datetime import datetime
 import pandas as pd
-from utils.weather import get_openweather_forecast, get_openmeteo_forecast, predict_first_snowfall_openweather, predict_first_snowfall_openmeteo, get_historical_snowfall
+from utils.weather import (
+    get_openweather_forecast,
+    get_openmeteo_forecast,
+    predict_first_snowfall_openweather,
+    predict_first_snowfall_openmeteo,
+    get_historical_snowfall
+)
 from utils.visualization import plot_player_guesses_timeline, plot_historical_snowfall
 from config.api_keys import OPENWEATHER_API_KEY  # Import the API key
 
@@ -37,7 +43,7 @@ def main():
     st.header("Player Guesses Timeline")
     fig_timeline = plot_player_guesses_timeline(guesses)
     if fig_timeline:
-        st.plotly_chart(fig_timeline)
+        st.pyplot(fig_timeline)
 
     # Insert a horizontal line
     st.markdown("<hr>", unsafe_allow_html=True)
@@ -80,7 +86,7 @@ def main():
 
     st.header("Historical First Snowfall Dates (Past 20 Years)")
     if not historical_df.empty:
-        st.plotly_chart(plot_historical_snowfall(historical_df))
+        st.pyplot(plot_historical_snowfall(historical_df))
     else:
         st.write("No historical snowfall data available.")
 
