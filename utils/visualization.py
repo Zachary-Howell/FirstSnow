@@ -87,28 +87,22 @@ def plot_historical_snowfall_plotly(historical_df):
     """
     Create a Plotly bar chart showing the frequency of first snowfall dates.
     """
-    # Convert to datetime
+    # Convert to datetime if not already
     historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
 
-    # Extract month and day (ignore the year)
-    historical_df['month_day'] = historical_df['first_snowfall_date'].apply(lambda x: x.strftime('%m-%d'))
+    # Extract month and day as a datetime object (using a constant year)
+    historical_df['month_day'] = historical_df['first_snowfall_date'].apply(lambda x: pd.Timestamp(year=2023, month=x.month, day=x.day))
 
     # Count the occurrences of each month_day
     snowfall_counts = historical_df['month_day'].value_counts().sort_index()
 
     # Ensure all possible days are included (even if zero occurrences)
-    all_days = pd.date_range('2023-07-01', '2023-12-31').strftime('%m-%d')
+    all_days = pd.date_range('2023-07-01', '2023-12-31')
     snowfall_counts = snowfall_counts.reindex(all_days, fill_value=0)
-
-    # Convert to DataFrame for Plotly
-    snowfall_counts_df = pd.DataFrame({
-        'month_day': snowfall_counts.index,
-        'count': snowfall_counts.values
-    })
 
     # Plot bar chart with Plotly
     fig = go.Figure(data=[
-        go.Bar(x=snowfall_counts_df['month_day'], y=snowfall_counts_df['count'])
+        go.Bar(x=snowfall_counts.index, y=snowfall_counts.values)
     ])
 
     # Update layout to improve appearance
@@ -118,8 +112,9 @@ def plot_historical_snowfall_plotly(historical_df):
         yaxis_title="Number of Occurrences",
         xaxis=dict(
             tickmode='array',
-            tickvals=[f'{month:02}-01' for month in range(7, 13)],
-            ticktext=['July', 'August', 'September', 'October', 'November', 'December']
+            tickvals=pd.date_range('2023-07-01', '2023-12-31', freq='MS'),
+            ticktext=['July', 'August', 'September', 'October', 'November', 'December'],
+            tickformat='%b-%d'
         ),
         bargap=0.1,
     )
