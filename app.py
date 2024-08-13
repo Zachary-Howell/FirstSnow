@@ -36,8 +36,23 @@ def main():
     # Streamlit UI
     st.title("First Snowfall Game")
 
-    st.header("Player Guesses Timeline")
-    st.plotly_chart(plot_player_guesses_timeline(guesses))
+    try:
+        guess_df = pd.DataFrame(list(guesses.items()), columns=['Player', 'Guess'])
+        guess_df['Guess'] = pd.to_datetime(guess_df['Guess'])
+        guess_df['End'] = guess_df['Guess']  # Same date for start and end to make it a point on the timeline
+
+        fig_timeline = px.timeline(
+            guess_df,
+            x_start="Guess",
+            x_end="End",
+            y="Player",
+            color="Player",
+            title="Player Guesses Timeline"
+        )
+        fig_timeline.update_yaxes(categoryorder="total ascending")
+        st.plotly_chart(fig_timeline)
+    except Exception as e:
+        st.error(f"An error occurred while creating the timeline: {e}")
 
     # Combine the forecasts under a single header
     st.header("Predicted First Snowfall Date (Combined Forecasts)")
