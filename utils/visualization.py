@@ -53,6 +53,14 @@ def plot_player_guesses_timeline(guesses):
         return None
 
 def plot_historical_snowfall(historical_df):
+    if 'first_snowfall_date' not in historical_df.columns:
+        st.error("The 'first_snowfall_date' column is missing from the historical data.")
+        return None
+
+    if historical_df.empty:
+        st.error("The historical data is empty.")
+        return None
+
     # Convert dates to day of the year (ordinal) for histogram, considering only post-July 1st dates
     historical_df['day_of_year'] = historical_df['first_snowfall_date'].dt.dayofyear
 
