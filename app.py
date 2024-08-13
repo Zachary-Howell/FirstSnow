@@ -87,6 +87,12 @@ def main():
     st.header("Historical First Snowfall Dates (Past 20 Years)")
     if not historical_df.empty:
         st.pyplot(plot_historical_snowfall(historical_df))
+
+        # Calculate and display statistics
+        earliest_day, latest_day, average_day = calculate_snowfall_statistics(historical_df)
+        st.markdown(f"**Earliest First Snowfall:** {earliest_day}")
+        st.markdown(f"**Latest First Snowfall:** {latest_day}")
+        st.markdown(f"**Average First Snowfall:** {average_day}")
     else:
         st.write("No historical snowfall data available.")
 

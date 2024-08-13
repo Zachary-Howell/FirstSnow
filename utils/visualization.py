@@ -53,14 +53,31 @@ def plot_player_guesses_timeline(guesses):
         return None
 
 def plot_historical_snowfall(historical_df):
+    # Convert dates to day of the year (ordinal) for histogram
     historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
-    historical_df['first_snowfall_day_of_year'] = historical_df['first_snowfall_date'].dt.dayofyear
+    historical_df['day_of_year'] = historical_df['first_snowfall_date'].dt.dayofyear
 
-    fig, ax = plt.subplots()
-    ax.bar(historical_df['year'], historical_df['first_snowfall_day_of_year'])
-    ax.set_xlabel('Year')
-    ax.set_ylabel('Day of Year')
-    ax.set_title('First Snowfall Day of Year Over the Past 20 Years')
-    
+    # Create the histogram
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.hist(historical_df['day_of_year'], bins=365, range=(1, 365), color='skyblue', edgecolor='black')
+
+    # Set x-axis to show calendar days
+    ax.set_xticks([datetime(2024, month, 1).timetuple().tm_yday for month in range(1, 13)])
+    ax.set_xticklabels([datetime(2024, month, 1).strftime('%b') for month in range(1, 13)])
+    ax.set_xlim(1, 365)
+
+    # Set labels and title
+    ax.set_xlabel('Day of Year')
+    ax.set_ylabel('Number of Occurrences')
+    ax.set_title('First Snowfall Frequency by Calendar Day')
+
     plt.tight_layout()
     return fig
+
+def calculate_snowfall_statistics(historical_df):
+    # Calculate earliest, latest, and average first snowfall day
+    earliest_day = historical_df['first_snowfall_date'].min().strftime('%B %d')
+    latest_day = historical_df['first_snowfall_date'].max().strftime('%B %d')
+    average_day = pd.to_datetime(historical_df['day_of_year'].mean(), format='%j').strftime('%B %d')
+
+    return earliest_day, latest_day, average_day
