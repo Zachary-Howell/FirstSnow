@@ -2,6 +2,4 @@ streamlit
 datetime
 requests
 plotly
-plotly.express
-plotly.figure_factory
 pandas
