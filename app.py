@@ -42,7 +42,7 @@ def main():
     st.title("❄❄❄ Snowfall - The Game ❄❄❄")
 
     st.header("PLAYER GUESSES")
-    fig_timeline = plot_player_guesses_timeline(guesses)
+    fig_timeline = plot_player_guesses_timeline(guesses, earliest_day, latest_day, average_day)
     if fig_timeline:
         st.pyplot(fig_timeline)
 
