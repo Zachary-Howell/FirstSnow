@@ -73,9 +73,8 @@ def main():
     closest_guess_today = min(guesses.items(), key=lambda x: abs(datetime.strptime(x[1], '%Y-%m-%d').date() - datetime.now().date()))
     st.write(f"{closest_guess_today[0]} would win with a guess of {closest_guess_today[1]}.")
 
-    st.subheader("If forecasts are accurate")
+    st.subheader("If forecasts are accurate?")
     if predicted_snowfall_date_openweather or predicted_snowfall_date_openmeteo:
-        st.header("Who Would Win If the Forecast is True?")
         if predicted_snowfall_date_openweather:
             predicted_date = datetime.strptime(predicted_snowfall_date_openweather, '%Y-%m-%d %H:%M:%S').date()
             closest_guess_predicted = min(guesses.items(), key=lambda x: abs(datetime.strptime(x[1], '%Y-%m-%d').date() - predicted_date))
@@ -84,8 +83,8 @@ def main():
             predicted_date = datetime.strptime(predicted_snowfall_date_openmeteo, '%Y-%m-%d').date()
             closest_guess_predicted = min(guesses.items(), key=lambda x: abs(datetime.strptime(x[1], '%Y-%m-%d').date() - predicted_date))
             st.write(f"If Open-Meteo is correct, {closest_guess_predicted[0]} would win with a guess of {closest_guess_predicted[1]}.")
-        else:
-            st.write("No snowfall is currently forecasted.")
+    else:
+        st.write("No snowfall is forecasted in the near future.")
 
     # Insert a horizontal line
     st.markdown("<hr>", unsafe_allow_html=True)
