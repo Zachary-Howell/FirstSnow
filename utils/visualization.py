@@ -53,10 +53,6 @@ def plot_player_guesses_timeline(guesses):
         return None
 
 def plot_historical_snowfall(historical_df):
-    # Filter snowfall dates to only include dates after July 1st
-    historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
-    historical_df = historical_df[historical_df['first_snowfall_date'].dt.month >= 7]
-
     # Convert dates to day of the year (ordinal) for histogram, considering only post-July 1st dates
     historical_df['day_of_year'] = historical_df['first_snowfall_date'].dt.dayofyear
 
@@ -76,18 +72,3 @@ def plot_historical_snowfall(historical_df):
 
     plt.tight_layout()
     return fig
-
-def calculate_snowfall_statistics(historical_df):
-    # Filter snowfall dates to only include dates after July 1st
-    historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
-    historical_df = historical_df[historical_df['first_snowfall_date'].dt.month >= 7]
-
-    if historical_df.empty:
-        return "N/A", "N/A", "N/A"
-
-    # Calculate earliest, latest, and average first snowfall day
-    earliest_day = historical_df['first_snowfall_date'].min().strftime('%B %d')
-    latest_day = historical_df['first_snowfall_date'].max().strftime('%B %d')
-    average_day = pd.to_datetime(historical_df['day_of_year'].mean(), format='%j').strftime('%B %d')
-
-    return earliest_day, latest_day, average_day
