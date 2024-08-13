@@ -84,7 +84,7 @@ def plot_historical_snowfall(historical_df):
 
 def plot_historical_snowfall_plotly(historical_df):
     """
-    Create a Plotly histogram showing the frequency of first snowfall dates.
+    Create a Plotly bar chart showing the frequency of first snowfall dates.
     """
     # Convert to datetime
     historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
@@ -92,9 +92,18 @@ def plot_historical_snowfall_plotly(historical_df):
     # Extract month and day (ignore the year)
     historical_df['month_day'] = historical_df['first_snowfall_date'].apply(lambda x: x.strftime('%m-%d'))
 
-    # Plot histogram with Plotly
-    fig = px.histogram(historical_df, x='month_day', nbins=365, title='First Snowfall Frequency by Calendar Day',
-                       labels={'month_day': 'Day of Year (Post-Summer)', 'count': 'Number of Occurrences'})
+    # Count the occurrences of each month_day
+    snowfall_counts = historical_df['month_day'].value_counts().sort_index()
+
+    # Convert to DataFrame for Plotly
+    snowfall_counts_df = pd.DataFrame({
+        'month_day': snowfall_counts.index,
+        'count': snowfall_counts.values
+    })
+
+    # Plot bar chart with Plotly
+    fig = px.bar(snowfall_counts_df, x='month_day', y='count', title='First Snowfall Frequency by Calendar Day',
+                 labels={'month_day': 'Day of Year (Post-Summer)', 'count': 'Number of Occurrences'})
 
     # Update layout to improve appearance
     fig.update_layout(
