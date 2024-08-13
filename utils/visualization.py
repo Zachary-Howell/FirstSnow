@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
 from datetime import datetime
 
 def plot_player_guesses_timeline(guesses):
@@ -95,6 +96,10 @@ def plot_historical_snowfall_plotly(historical_df):
     # Count the occurrences of each month_day
     snowfall_counts = historical_df['month_day'].value_counts().sort_index()
 
+    # Ensure all possible days are included (even if zero occurrences)
+    all_days = pd.date_range('2023-07-01', '2023-12-31').strftime('%m-%d')
+    snowfall_counts = snowfall_counts.reindex(all_days, fill_value=0)
+
     # Convert to DataFrame for Plotly
     snowfall_counts_df = pd.DataFrame({
         'month_day': snowfall_counts.index,
@@ -102,15 +107,20 @@ def plot_historical_snowfall_plotly(historical_df):
     })
 
     # Plot bar chart with Plotly
-    fig = px.bar(snowfall_counts_df, x='month_day', y='count', title='First Snowfall Frequency by Calendar Day',
-                 labels={'month_day': 'Day of Year (Post-Summer)', 'count': 'Number of Occurrences'})
+    fig = go.Figure(data=[
+        go.Bar(x=snowfall_counts_df['month_day'], y=snowfall_counts_df['count'])
+    ])
 
     # Update layout to improve appearance
     fig.update_layout(
+        title='First Snowfall Frequency by Calendar Day',
         xaxis_title="Day of Year",
         yaxis_title="Number of Occurrences",
-        xaxis=dict(tickmode='array', tickvals=[f'{month:02}-01' for month in range(7, 13)],
-                   ticktext=['July', 'August', 'September', 'October', 'November', 'December']),
+        xaxis=dict(
+            tickmode='array',
+            tickvals=[f'{month:02}-01' for month in range(7, 13)],
+            ticktext=['July', 'August', 'September', 'October', 'November', 'December']
+        ),
         bargap=0.1,
     )
 
