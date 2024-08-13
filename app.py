@@ -4,12 +4,13 @@ from datetime import datetime
 import pandas as pd
 from utils.weather import (
     get_openweather_forecast,
+    calculate_snowfall_statistics,
     get_openmeteo_forecast,
     predict_first_snowfall_openweather,
     predict_first_snowfall_openmeteo,
     get_historical_snowfall
 )
-from utils.visualization import plot_player_guesses_timeline, plot_historical_snowfall, calculate_snowfall_statistics
+from utils.visualization import plot_player_guesses_timeline, plot_historical_snowfall
 from config.api_keys import OPENWEATHER_API_KEY  # Import the API key
 
 # Load JSON data
