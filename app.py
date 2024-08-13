@@ -72,7 +72,7 @@ def main():
     st.markdown("<hr>", unsafe_allow_html=True)
 
     # Combine the forecasts under a single header
-    st.header("Predicted First Snowfall Date (Combined Forecasts)")
+    st.header("Forecasted First Snowfall Date")
 
     st.subheader("OpenWeatherMap Forecast")
     if predicted_snowfall_date_openweather:
