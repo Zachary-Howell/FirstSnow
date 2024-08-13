@@ -10,7 +10,7 @@ from utils.weather import (
     predict_first_snowfall_openmeteo,
     get_historical_snowfall
 )
-from utils.visualization import plot_player_guesses_timeline, plot_historical_snowfall
+from utils.visualization import plot_player_guesses_timeline, plot_historical_snowfall, plot_historical_snowfall_plotly
 from config.api_keys import OPENWEATHER_API_KEY  # Import the API key
 
 # Load JSON data
@@ -67,10 +67,13 @@ def main():
     # Insert a horizontal line
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    st.header("Who Would Win If It Snowed Today?")
+    st.header("Projected Winners:")
+    
+    st.subheader('If it snowed today?')
     closest_guess_today = min(guesses.items(), key=lambda x: abs(datetime.strptime(x[1], '%Y-%m-%d').date() - datetime.now().date()))
     st.write(f"{closest_guess_today[0]} would win with a guess of {closest_guess_today[1]}.")
 
+    st.subheader("If forecasts are accurate")
     if predicted_snowfall_date_openweather or predicted_snowfall_date_openmeteo:
         st.header("Who Would Win If the Forecast is True?")
         if predicted_snowfall_date_openweather:
@@ -81,6 +84,8 @@ def main():
             predicted_date = datetime.strptime(predicted_snowfall_date_openmeteo, '%Y-%m-%d').date()
             closest_guess_predicted = min(guesses.items(), key=lambda x: abs(datetime.strptime(x[1], '%Y-%m-%d').date() - predicted_date))
             st.write(f"If Open-Meteo is correct, {closest_guess_predicted[0]} would win with a guess of {closest_guess_predicted[1]}.")
+        else:
+            st.write("No snowfall is currently forecasted.")
 
     # Insert a horizontal line
     st.markdown("<hr>", unsafe_allow_html=True)
@@ -88,6 +93,8 @@ def main():
     st.header("Historical First Snowfall Dates (Past 20 Years)")
     if not historical_df.empty:
         st.pyplot(plot_historical_snowfall(historical_df))
+        fig = plot_historical_snowfall_plotly(historical_df)
+        st.plotly_chart(fig)
 
         # Calculate and display statistics
         earliest_day, latest_day, average_day = calculate_snowfall_statistics(historical_df)

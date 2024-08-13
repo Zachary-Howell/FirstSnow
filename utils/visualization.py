@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import streamlit as st
+import plotly.express as px
 from datetime import datetime
 
 def plot_player_guesses_timeline(guesses):
@@ -79,4 +80,29 @@ def plot_historical_snowfall(historical_df):
     ax.set_title('First Snowfall Frequency by Calendar Day (Post-Summer)')
 
     plt.tight_layout()
+    return fig
+
+def plot_historical_snowfall_plotly(historical_df):
+    """
+    Create a Plotly histogram showing the frequency of first snowfall dates.
+    """
+    # Convert to datetime
+    historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
+
+    # Extract month and day (ignore the year)
+    historical_df['month_day'] = historical_df['first_snowfall_date'].apply(lambda x: x.strftime('%m-%d'))
+
+    # Plot histogram with Plotly
+    fig = px.histogram(historical_df, x='month_day', nbins=365, title='First Snowfall Frequency by Calendar Day',
+                       labels={'month_day': 'Day of Year (Post-Summer)', 'count': 'Number of Occurrences'})
+
+    # Update layout to improve appearance
+    fig.update_layout(
+        xaxis_title="Day of Year",
+        yaxis_title="Number of Occurrences",
+        xaxis=dict(tickmode='array', tickvals=[f'{month:02}-01' for month in range(7, 13)],
+                   ticktext=['July', 'August', 'September', 'October', 'November', 'December']),
+        bargap=0.1,
+    )
+
     return fig
