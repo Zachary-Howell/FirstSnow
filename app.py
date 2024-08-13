@@ -93,8 +93,6 @@ def main():
     st.header("Historical First Snowfall Dates (Past 20 Years)")
     if not historical_df.empty:
         st.pyplot(plot_historical_snowfall(historical_df))
-        fig = plot_historical_snowfall_plotly(historical_df)
-        st.plotly_chart(fig)
 
         # Calculate and display statistics
         earliest_day, latest_day, average_day = calculate_snowfall_statistics(historical_df)

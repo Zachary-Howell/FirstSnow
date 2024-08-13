@@ -54,69 +54,70 @@ def plot_player_guesses_timeline(guesses):
         st.error(f"An error occurred while creating the timeline: {e}")
         return None
 
+# def plot_historical_snowfall(historical_df):
+#     if 'first_snowfall_date' not in historical_df.columns:
+#         st.error("The 'first_snowfall_date' column is missing from the historical data.")
+#         return None
+
+#     if historical_df.empty:
+#         st.error("The historical data is empty.")
+#         return None
+
+#     # Convert dates to day of the year (ordinal) for histogram, considering only post-July 1st dates
+#     historical_df['day_of_year'] = historical_df['first_snowfall_date'].dt.dayofyear
+
+#     # Create the histogram
+#     fig, ax = plt.subplots(figsize=(10, 5))
+#     ax.hist(historical_df['day_of_year'], bins=365-182, range=(183, 365), color='skyblue', edgecolor='black')
+
+#     # Set x-axis to show calendar days from July to December
+#     ax.set_xticks([datetime(2024, month, 1).timetuple().tm_yday for month in range(7, 13)])
+#     ax.set_xticklabels([datetime(2024, month, 1).strftime('%b') for month in range(7, 13)])
+#     ax.set_xlim(183, 365)
+
+#     # Set labels and title
+#     ax.set_xlabel('Day of Year (Post-Summer)')
+#     ax.set_ylabel('Number of Occurrences')
+#     ax.set_title('First Snowfall Frequency by Calendar Day (Post-Summer)')
+
+#     plt.tight_layout()
+#     return fig
+
 def plot_historical_snowfall(historical_df):
-    if 'first_snowfall_date' not in historical_df.columns:
-        st.error("The 'first_snowfall_date' column is missing from the historical data.")
-        return None
-
-    if historical_df.empty:
-        st.error("The historical data is empty.")
-        return None
-
-    # Convert dates to day of the year (ordinal) for histogram, considering only post-July 1st dates
-    historical_df['day_of_year'] = historical_df['first_snowfall_date'].dt.dayofyear
-
-    # Create the histogram
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.hist(historical_df['day_of_year'], bins=365-182, range=(183, 365), color='skyblue', edgecolor='black')
-
-    # Set x-axis to show calendar days from July to December
-    ax.set_xticks([datetime(2024, month, 1).timetuple().tm_yday for month in range(7, 13)])
-    ax.set_xticklabels([datetime(2024, month, 1).strftime('%b') for month in range(7, 13)])
-    ax.set_xlim(183, 365)
-
-    # Set labels and title
-    ax.set_xlabel('Day of Year (Post-Summer)')
-    ax.set_ylabel('Number of Occurrences')
-    ax.set_title('First Snowfall Frequency by Calendar Day (Post-Summer)')
-
-    plt.tight_layout()
-    return fig
-
-def plot_historical_snowfall_plotly(historical_df):
     """
-    Create a Plotly bar chart showing the frequency of first snowfall dates.
+    Create a Matplotlib bar chart showing the frequency of first snowfall dates.
     """
     # Convert to datetime if not already
     historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
 
-    # Extract month and day as a datetime object (using a constant year)
-    historical_df['month_day'] = historical_df['first_snowfall_date'].apply(lambda x: pd.Timestamp(year=2023, month=x.month, day=x.day))
+    # Extract month and day, ignore the year
+    historical_df['month_day'] = historical_df['first_snowfall_date'].apply(lambda x: x.strftime('%m-%d'))
 
     # Count the occurrences of each month_day
     snowfall_counts = historical_df['month_day'].value_counts().sort_index()
 
-    # Ensure all possible days are included (even if zero occurrences)
-    all_days = pd.date_range('2023-07-01', '2023-12-31')
-    snowfall_counts = snowfall_counts.reindex(all_days, fill_value=0)
+    # Convert month_day back to datetime for plotting, assuming a common year (e.g., 2023)
+    snowfall_counts.index = pd.to_datetime(snowfall_counts.index, format='%m-%d').map(lambda x: x.replace(year=2023))
 
-    # Plot bar chart with Plotly
-    fig = go.Figure(data=[
-        go.Bar(x=snowfall_counts.index, y=snowfall_counts.values)
-    ])
+    # Determine the x-axis limits based on the data
+    start_date = snowfall_counts.index.min()
+    end_date = snowfall_counts.index.max()
 
-    # Update layout to improve appearance
-    fig.update_layout(
-        title='First Snowfall Frequency by Calendar Day',
-        xaxis_title="Day of Year",
-        yaxis_title="Number of Occurrences",
-        xaxis=dict(
-            tickmode='array',
-            tickvals=pd.date_range('2023-07-01', '2023-12-31', freq='MS'),
-            ticktext=['July', 'August', 'September', 'October', 'November', 'December'],
-            tickformat='%b-%d'
-        ),
-        bargap=0.1,
-    )
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.bar(snowfall_counts.index, snowfall_counts.values, color='skyblue', edgecolor='black')
 
+    # Set x-axis limits to only show months with data
+    ax.set_xlim(start_date, end_date)
+
+    # Set x-axis format to show months
+    ax.xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%b'))
+    ax.set_xticks(pd.date_range(start=start_date, end=end_date, freq='MS'))
+
+    # Set labels and title
+    ax.set_xlabel('Month')
+    ax.set_ylabel('Number of Occurrences')
+    ax.set_title('First Snowfall Frequency by Calendar Day')
+
+    plt.tight_layout()
     return fig
