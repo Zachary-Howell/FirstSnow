@@ -17,8 +17,16 @@ def plot_player_guesses_timeline(guesses):
             title="Player Guesses Timeline"
         )
         fig_timeline.update_yaxes(categoryorder="total ascending")
-        fig_timeline.update_traces(marker=dict(size=12))  # Adjust marker size for better visibility
         return fig_timeline
     except Exception as e:
         st.error(f"An error occurred while creating the timeline: {e}")
         return None
+
+def plot_historical_snowfall(historical_df):
+    historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
+    historical_df['first_snowfall_day_of_year'] = historical_df['first_snowfall_date'].dt.dayofyear
+
+    fig = px.bar(historical_df, x='year', y='first_snowfall_day_of_year', 
+                 labels={'first_snowfall_day_of_year': 'Day of Year', 'year': 'Year'}, 
+                 title='First Snowfall Day of Year Over the Past 20 Years')
+    return fig
