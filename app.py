@@ -9,7 +9,7 @@ from utils.weather import (
     predict_first_snowfall_openmeteo,
     get_historical_snowfall
 )
-from utils.visualization import plot_player_guesses_timeline, plot_historical_snowfall
+from utils.visualization import plot_player_guesses_timeline, plot_historical_snowfall, calculate_snowfall_statistics
 from config.api_keys import OPENWEATHER_API_KEY  # Import the API key
 
 # Load JSON data
