@@ -7,13 +7,21 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 
-def plot_player_guesses_timeline(guesses_df, earliest_day, latest_day, average_day):
+def plot_player_guesses_timeline(earliest_day, latest_day, average_day):
     """
     Create a Matplotlib timeline of player guesses for the first snowfall,
     with markers for the earliest, latest, and average first snowfall days.
     """
-    # Convert guess dates and special dates to datetime
+    # Load guesses from the JSON file located in the config folder
+    guesses = load_json('config/guesses.json')
+    
+    # Convert to DataFrame
+    guesses_df = pd.DataFrame(guesses)
+
+    # Convert 'guess_date' to datetime
     guesses_df['guess_date'] = pd.to_datetime(guesses_df['guess_date'])
+
+    # Convert earliest, latest, and average days to datetime
     earliest_day_date = pd.to_datetime(earliest_day, format='%B %d')
     latest_day_date = pd.to_datetime(latest_day, format='%B %d')
     average_day_date = pd.to_datetime(average_day, format='%B %d')
