@@ -71,7 +71,7 @@ def calculate_snowfall_statistics(historical_df):
     average_day_of_year = historical_df['first_snowfall_date'].dt.dayofyear.mean()
     average_day = pd.to_datetime(average_day_of_year, format='%j').strftime('%B %d')
 
-    return earliest_day, latest_day, average_day, historical_df
+    return earliest_day, latest_day, average_day
 
 
 def predict_first_snowfall_openweather(forecast_data):
