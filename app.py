@@ -43,7 +43,7 @@ def main():
 
     st.header("PLAYER GUESSES")
     earliest_day, latest_day, average_day = calculate_snowfall_statistics(historical_df)
-    fig_timeline = plot_player_guesses_timeline(guesses, earliest_day, latest_day, average_day)
+    fig_timeline = plot_player_guesses_timeline(earliest_day, latest_day, average_day)
     if fig_timeline:
         st.pyplot(fig_timeline)
 
