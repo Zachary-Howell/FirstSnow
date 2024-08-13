@@ -98,7 +98,7 @@ def main():
         st.markdown(f"""
         - **Earliest Day:** {earliest_day}
         - **Latest Day:** {latest_day}
-        - **Average Day:** {average_day}
+        - **Median Day:** {average_day}
         """)
     else:
         st.write("No historical snowfall data available.")
