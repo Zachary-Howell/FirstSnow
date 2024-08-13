@@ -115,11 +115,10 @@ def plot_historical_snowfall(historical_df):
     ax.set_xticks(pd.date_range(start=start_date, end=end_date, freq='MS'))
 
     # Annotate each bar with the corresponding day of the month
-    for bar in bars:
+    for bar, date in zip(bars, snowfall_counts.index):
         height = bar.get_height()
-        label = bar.get_x() + bar.get_width() / 2
-        day = pd.to_datetime(bar.get_x()).strftime('%d')
-        ax.text(label, height, day, ha='center', va='bottom')
+        day = date.strftime('%d')
+        ax.text(bar.get_x() + bar.get_width() / 2, height, day, ha='center', va='bottom')
 
     # Set labels and title
     ax.set_xlabel('Month')
