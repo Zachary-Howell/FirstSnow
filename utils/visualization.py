@@ -118,7 +118,8 @@ def plot_historical_snowfall(historical_df):
     for bar in bars:
         height = bar.get_height()
         label = bar.get_x() + bar.get_width() / 2
-        ax.text(label, height, bar.get_xdate().strftime('%d'), ha='center', va='bottom')
+        day = pd.to_datetime(bar.get_x()).strftime('%d')
+        ax.text(label, height, day, ha='center', va='bottom')
 
     # Set labels and title
     ax.set_xlabel('Month')
