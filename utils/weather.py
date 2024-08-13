@@ -52,8 +52,15 @@ def calculate_snowfall_statistics(historical_df):
     """
     Calculate the earliest, latest, and average first snowfall day after summer for the given historical data.
     """
+    # Debugging: Check the DataFrame before any processing
+    st.write("Original Historical DataFrame:", historical_df)
+
+    # Ensure all dates are after July 1st
     historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
     historical_df = historical_df[historical_df['first_snowfall_date'].dt.month >= 7]
+
+    # Debugging: Check the DataFrame after filtering
+    st.write("Filtered Historical DataFrame (after July 1st):", historical_df)
 
     if historical_df.empty:
         return "N/A", "N/A", "N/A"
@@ -62,6 +69,9 @@ def calculate_snowfall_statistics(historical_df):
     earliest_day = historical_df['first_snowfall_date'].min().strftime('%B %d')
     latest_day = historical_df['first_snowfall_date'].max().strftime('%B %d')
     average_day = pd.to_datetime(historical_df['first_snowfall_date'].dt.dayofyear.mean(), format='%j').strftime('%B %d')
+
+    # Debugging: Output the calculated earliest, latest, and average days
+    st.write(f"Earliest Day: {earliest_day}, Latest Day: {latest_day}, Average Day: {average_day}")
 
     return earliest_day, latest_day, average_day
 

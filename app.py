@@ -38,7 +38,7 @@ def main():
     historical_snowfall = get_historical_snowfall(latitude, longitude, datetime.now().year - 20, datetime.now().year - 1)
     historical_df = pd.DataFrame(historical_snowfall)
 
-    st.write("Historical Snowfall DataFrame:", historical_df)  # Use Streamlit to inspect the data
+    # st.write("Historical Snowfall DataFrame:", historical_df)  # Use Streamlit to inspect the data
 
     # Streamlit UI
     st.title("First Snowfall Game")
