@@ -99,9 +99,9 @@ def plot_historical_snowfall(historical_df):
     # Convert month_day back to datetime for plotting, assuming a common year (e.g., 2023)
     snowfall_counts.index = pd.to_datetime(snowfall_counts.index, format='%m-%d').map(lambda x: x.replace(year=2023))
 
-    # Determine the x-axis limits based on the data
-    start_date = snowfall_counts.index.min().replace(day=1)  # Start at the beginning of the earliest month
-    end_date = snowfall_counts.index.max().replace(day=1) + pd.DateOffset(months=1) - pd.DateOffset(days=1)  # End at the last day of the latest month
+    # Determine the x-axis limits based on the data with a 2-day buffer
+    start_date = snowfall_counts.index.min() - pd.DateOffset(days=2)
+    end_date = snowfall_counts.index.max() + pd.DateOffset(days=2)
 
     # Create the plot
     fig, ax = plt.subplots(figsize=(10, 5))
