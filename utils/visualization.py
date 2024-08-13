@@ -53,28 +53,35 @@ def plot_player_guesses_timeline(guesses):
         return None
 
 def plot_historical_snowfall(historical_df):
-    # Convert dates to day of the year (ordinal) for histogram
+    # Filter snowfall dates to only include dates after July 1st
     historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
+    historical_df = historical_df[historical_df['first_snowfall_date'].dt.month >= 7]
+
+    # Convert dates to day of the year (ordinal) for histogram, considering only post-July 1st dates
     historical_df['day_of_year'] = historical_df['first_snowfall_date'].dt.dayofyear
 
     # Create the histogram
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.hist(historical_df['day_of_year'], bins=365, range=(1, 365), color='skyblue', edgecolor='black')
+    ax.hist(historical_df['day_of_year'], bins=365-182, range=(183, 365), color='skyblue', edgecolor='black')
 
-    # Set x-axis to show calendar days
-    ax.set_xticks([datetime(2024, month, 1).timetuple().tm_yday for month in range(1, 13)])
-    ax.set_xticklabels([datetime(2024, month, 1).strftime('%b') for month in range(1, 13)])
-    ax.set_xlim(1, 365)
+    # Set x-axis to show calendar days from July to December
+    ax.set_xticks([datetime(2024, month, 1).timetuple().tm_yday for month in range(7, 13)])
+    ax.set_xticklabels([datetime(2024, month, 1).strftime('%b') for month in range(7, 13)])
+    ax.set_xlim(183, 365)
 
     # Set labels and title
-    ax.set_xlabel('Day of Year')
+    ax.set_xlabel('Day of Year (Post-Summer)')
     ax.set_ylabel('Number of Occurrences')
-    ax.set_title('First Snowfall Frequency by Calendar Day')
+    ax.set_title('First Snowfall Frequency by Calendar Day (Post-Summer)')
 
     plt.tight_layout()
     return fig
 
 def calculate_snowfall_statistics(historical_df):
+    # Filter snowfall dates to only include dates after July 1st
+    historical_df['first_snowfall_date'] = pd.to_datetime(historical_df['first_snowfall_date'])
+    historical_df = historical_df[historical_df['first_snowfall_date'].dt.month >= 7]
+
     # Calculate earliest, latest, and average first snowfall day
     earliest_day = historical_df['first_snowfall_date'].min().strftime('%B %d')
     latest_day = historical_df['first_snowfall_date'].max().strftime('%B %d')
