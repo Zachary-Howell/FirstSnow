@@ -13,21 +13,20 @@ def plot_player_guesses_timeline(guesses):
         # Get today's date
         today = pd.to_datetime(datetime.today().date())
 
+        # Generate unique colors for each player
+        colors = plt.cm.get_cmap('tab10', len(guess_df))
+
         # Create the figure and axis
         fig, ax = plt.subplots(figsize=(10, 2))
 
         # Plot the timeline (a single horizontal line)
-        ax.plot(guess_df['Guess'], [1] * len(guess_df), "o", color="C0")
-
-        # Add vertical stems connecting points to the timeline
-        ax.vlines(guess_df['Guess'], 0, 1, colors="C0", linestyle='dotted')
-
-        # Add player names and guess dates as labels
         for idx, row in guess_df.iterrows():
+            ax.plot(row['Guess'], 1, "o", color=colors(idx))
+            ax.vlines(row['Guess'], 0, 1, colors=colors(idx), linestyle='dotted')
             ax.text(row['Guess'], 1.05, f"{row['Player']}\n{row['Guess'].strftime('%b %d')}", 
-                    ha='center', fontsize=8, rotation=45)
+                    ha='center', fontsize=8, rotation=45, color=colors(idx))
 
-        # Plot today's date
+        # Plot today's date in a distinct color
         ax.plot(today, 1, "o", color="red")
         ax.vlines(today, 0, 1, colors="red", linestyle='solid')
         ax.text(today, 1.05, f"Today\n{today.strftime('%b %d')}", ha='center', fontsize=8, rotation=45, color="red")
