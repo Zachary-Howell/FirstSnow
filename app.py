@@ -89,7 +89,7 @@ def main():
     # Insert a horizontal line
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    st.header("HISTORICAL DATA")
+    st.header("HISTORICAL DATA (20 YEARS)")
     if not historical_df.empty:
         st.pyplot(plot_historical_snowfall(historical_df))
 
