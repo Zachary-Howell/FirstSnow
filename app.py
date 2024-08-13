@@ -49,24 +49,6 @@ def main():
     # Insert a horizontal line
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    # Combine the forecasts under a single header
-    st.header("Predicted First Snowfall Date (Combined Forecasts)")
-
-    st.subheader("OpenWeatherMap Forecast")
-    if predicted_snowfall_date_openweather:
-        st.write(f"OpenWeatherMap predicts the first snowfall on: {predicted_snowfall_date_openweather}")
-    else:
-        st.write("No snowfall predicted in the current 5-day forecast period.")
-
-    st.subheader("Open-Meteo Forecast")
-    if predicted_snowfall_date_openmeteo:
-        st.write(f"Open-Meteo predicts the first snowfall on: {predicted_snowfall_date_openmeteo}")
-    else:
-        st.write("No snowfall predicted in the current 14-day forecast period.")
-
-    # Insert a horizontal line
-    st.markdown("<hr>", unsafe_allow_html=True)
-
     st.header("Projected Winners:")
     
     st.subheader('If it snowed today?')
@@ -85,6 +67,24 @@ def main():
             st.write(f"If Open-Meteo is correct, {closest_guess_predicted[0]} would win with a guess of {closest_guess_predicted[1]}.")
     else:
         st.write("No snowfall is forecasted in the near future.")
+
+    # Insert a horizontal line
+    st.markdown("<hr>", unsafe_allow_html=True)
+
+    # Combine the forecasts under a single header
+    st.header("Predicted First Snowfall Date (Combined Forecasts)")
+
+    st.subheader("OpenWeatherMap Forecast")
+    if predicted_snowfall_date_openweather:
+        st.write(f"OpenWeatherMap predicts the first snowfall on: {predicted_snowfall_date_openweather}")
+    else:
+        st.write("No snowfall predicted in the current 5-day forecast period.")
+
+    st.subheader("Open-Meteo Forecast")
+    if predicted_snowfall_date_openmeteo:
+        st.write(f"Open-Meteo predicts the first snowfall on: {predicted_snowfall_date_openmeteo}")
+    else:
+        st.write("No snowfall predicted in the current 14-day forecast period.")
 
     # Insert a horizontal line
     st.markdown("<hr>", unsafe_allow_html=True)
