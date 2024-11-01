@@ -5,57 +5,111 @@ import matplotlib.ticker as ticker
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 
-def plot_player_guesses_timeline(guesses):
-    try:
-        # Convert guesses to DataFrame and parse dates
-        guess_df = pd.DataFrame(list(guesses.items()), columns=['Player', 'Guess'])
-        guess_df['Guess'] = pd.to_datetime(guess_df['Guess'])
+def plot_snowfall_timeline(first_snow_date=None, winner=None, predicted_snowfall_date_openmeteo=None):
+    """
+    Creates a Plotly timeline for snowfall guesses and the actual snowfall date if available.
 
-        # Get today's date
-        today = pd.to_datetime(datetime.today().date())
+    Parameters:
+        guesses (dict): Dictionary of guesses with player names as keys and guess dates as values.
+        first_snow_date (datetime.date, optional): The first snowfall date, if snowfall has occurred.
+        winner (str, optional): The name of the person with the closest guess, if snowfall has occurred.
 
-        # Generate unique colors for each player
-        colors = plt.cm.get_cmap('tab10', len(guess_df))
+    Returns:
+        fig (plotly.graph_objects.Figure): The Plotly figure object for the timeline.
+    """
+    # Prepare data for Plotly
+    with open('config\guesses.json') as f:
+        guesses = json.load(f)
+    
+    guess_data = [{"Name": name, "Date": pd.to_datetime(date)} for name, date in guesses.items()]
+    df = pd.DataFrame(guess_data)
 
-        # Create the figure and axis
-        fig, ax = plt.subplots(figsize=(10, 2))
+    # Group by Date and aggregate names for duplicate guesses
+    df = df.groupby("Date").agg({
+        "Name": lambda names: ', '.join(names)  # Combine names with the same date
+    }).reset_index()
 
-        # Plot the timeline (a single horizontal line)
-        for idx, row in guess_df.iterrows():
-            ax.plot(row['Guess'], 1, "o", color=colors(idx))
-            ax.vlines(row['Guess'], 0, 1, colors=colors(idx), linestyle='dotted')
-            ax.text(row['Guess'], 1.05, f"{row['Player']}\n{row['Guess'].strftime('%b %d')}", 
-                    ha='center', fontsize=8, rotation=45, color=colors(idx))
+    # Set all points to the same y-axis value (e.g., "Guesses")
+    df["Category"] = "Guesses"
 
-        # Plot today's date in a distinct color
-        ax.plot(today, 1, "o", color="red")
-        ax.vlines(today, 0, 1, colors="red", linestyle='solid')
-        ax.text(today, 1.05, f"Today\n{today.strftime('%b %d')}", ha='center', fontsize=8, rotation=45, color="red")
+    # Sort the data by date to connect points in chronological order
+    df = df.sort_values(by="Date")
 
-        # Format x-axis to show only months
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b"))
-        plt.setp(ax.get_xticklabels(), rotation=0, ha="center")
+    # Add the first snowfall date as a separate entry if available, converting it to datetime
+    if first_snow_date:
+        df = df.append({
+            "Name": "First Snowfall",
+            "Date": pd.to_datetime(first_snow_date).to_pydatetime(),
+            "Category": "First Snowfall"
+        }, ignore_index=True)
 
-        # Adjust x-axis limits to include today
-        ax.set_xlim(min(guess_df['Guess'].min(), today) - pd.Timedelta(days=2), 
-                    max(guess_df['Guess'].max(), today) + pd.Timedelta(days=2))
+    # Create custom hover text with full name and date/time
+    df["HoverText"] = df.apply(lambda row: f"{row['Name']}<br>{row['Date'].strftime('%m/%d %H:%M')}", axis=1)
 
-        # Remove y-axis and spines for a cleaner look
-        ax.get_yaxis().set_visible(False)
-        ax.spines[["left", "top", "right"]].set_visible(False)
+    # Create visible text with only initials
+    df["Initials"] = df["Name"].apply(get_initials)
 
-        # Adjust layout
-        plt.tight_layout()
+    # Create the Plotly figure with points and lines connecting them
+    fig = go.Figure()
 
-        return fig
-    except Exception as e:
-        st.error(f"An error occurred while creating the timeline: {e}")
-        return None
+    # Add line trace connecting all points in chronological order with custom hover and initials for visible text
+    fig.add_trace(go.Scatter(
+        x=df["Date"],
+        y=df["Category"],
+        mode="lines+markers+text",
+        marker=dict(size=10),
+        line=dict(color="blue"),
+        text=df["Initials"],             # Display initials as always-visible text
+        textposition="top center",       # Position initials text above points
+        hovertext=df["HoverText"],       # Full name and date/time on hover
+        hoverinfo="text",
+        name="Guesses"
+    ))
 
+    # Convert current date to milliseconds since epoch
+    current_date = datetime.now().timestamp() * 1000
+    fig.add_vline(
+        x=current_date,
+        line_dash="dash",
+        line_color="red",
+        annotation_text="Today",
+        annotation_position="top"
+    )
+
+    # Highlight the winner if available by adjusting marker color and size
+    if winner:
+        fig.add_trace(go.Scatter(
+            x=[df.loc[df["Name"].str.contains(winner), "Date"].values[0]],
+            y=["Guesses"],
+            mode="markers+text",
+            text=["Winner"],
+            textposition="top center",
+            marker=dict(size=12, color="gold", symbol="star"),
+            name="Winner"
+        ))
+
+    # Add Open-Meteo forecasted snowfall date vline if available
+    if predicted_snowfall_date_openmeteo:
+        # Parse the predicted date and convert to milliseconds since epoch
+        forecast_date = datetime.strptime(predicted_snowfall_date_openmeteo, '%Y-%m-%d').timestamp() * 1000
+        fig.add_vline(
+            x=forecast_date,
+            line_dash="dot",
+            line_color="blue",
+            annotation_text="Forecasted Snowfall",
+            annotation_position="top"
+        )
+        
+    # Customize the layout for readability
+    fig.update_layout(
+        yaxis=dict(showticklabels=False, showgrid=False, title=None),
+        showlegend=False
+    )
+
+    return fig
 
 def plot_historical_snowfall(historical_df):
     """
@@ -104,3 +158,36 @@ def plot_historical_snowfall(historical_df):
 
     plt.tight_layout()
     return fig
+
+def plot_snowfall_data(snowfall_df):
+    """
+    Creates a Plotly line chart of snowfall data over a specified period.
+    
+    Parameters:
+        snowfall_df (pd.DataFrame): DataFrame containing Date and Snowfall (inches) columns.
+    
+    Returns:
+        fig (plotly.graph_objects.Figure): The Plotly figure object for the chart.
+    """
+    # Create a Plotly line chart
+    fig = px.line(
+        snowfall_df,
+        x="Date",
+        y="Snowfall (inches)",
+        title="Daily Snowfall (inches)",
+        labels={"Snowfall (inches)": "Snowfall (inches)", "Date": "Date"}
+    )
+
+    # Customize the appearance and set y-axis minimum to 0
+    fig.update_layout(
+        xaxis_title="Date",
+        yaxis_title="Snowfall (inches)"
+    )
+
+    return fig
+
+def get_initials(names):
+    """Helper function to get initials from one or multiple names."""
+    initials_list = [f"{name.split()[0][0]}{name.split()[1][0]}" if len(name.split()) > 1 else name[0]
+                     for name in names.split(', ')]
+    return ', '.join(initials_list)
