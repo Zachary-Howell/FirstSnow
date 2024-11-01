@@ -21,7 +21,7 @@ def plot_snowfall_timeline(first_snow_date=None, winner=None, predicted_snowfall
         fig (plotly.graph_objects.Figure): The Plotly figure object for the timeline.
     """
     # Prepare data for Plotly
-    with open('config\guesses.json') as f:
+    with open('config/guesses.json') as f:
         guesses = json.load(f)
     
     guess_data = [{"Name": name, "Date": pd.to_datetime(date)} for name, date in guesses.items()]
@@ -102,7 +102,7 @@ def plot_snowfall_timeline(first_snow_date=None, winner=None, predicted_snowfall
             annotation_text="Forecasted Snowfall",
             annotation_position="top"
         )
-        
+
     # Customize the layout for readability
     fig.update_layout(
         yaxis=dict(showticklabels=False, showgrid=False, title=None),

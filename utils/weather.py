@@ -162,7 +162,7 @@ def get_test_snowfall_data(latitude, longitude):
     end_date = datetime(2023, 1, 31)
     return get_snowfall_data_df(latitude, longitude, start_date, end_date)
 
-def check_for_recent_snowfall(snowfall_df, guesses_file='config\guesses.json'):
+def check_for_recent_snowfall(snowfall_df, guesses_file='config/guesses.json'):
     """
     Checks if recent snowfall has occurred and determines the closest guess if snow has fallen.
 
