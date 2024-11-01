@@ -4,7 +4,6 @@ from datetime import datetime
 import pandas as pd
 from utils.weather import *
 from utils.visualization import *
-# from config.api_keys import OPENWEATHER_API_KEY  # Import the API key
 
 # Load JSON data
 def load_json(file_path):
